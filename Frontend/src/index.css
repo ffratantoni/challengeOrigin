@@ -1,0 +1,121 @@
+:root{
+  --bg:#e8e2db; /* gris cálido y más oscuro (formal) */
+  --card:#ffffff;
+  --card-contrast:#fbfbfa; /* slightly off-white for contrast */
+  --card-border: rgba(16,24,32,0.06);
+  --shadow: 0 10px 30px rgba(16,24,40,0.08);
+  --primary:#0a69ff;
+  --primary-dark:#0753d9;
+  --primary-light:#66a9ff;
+  --muted:#6b7280;
+  --input-border:#d9d6d1;
+  --accent:#0a69ff;
+}
+
+body{
+  margin:0;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  background:linear-gradient(180deg,var(--bg),#f6f3f0);
+  color: #111827;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+.login-container{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2rem;
+}
+
+.login-card{
+  background:var(--card-contrast);
+  padding:2rem;
+  border-radius:12px;
+  border:1px solid var(--card-border);
+  box-shadow:var(--shadow);
+  width:360px;
+}
+
+.login-card h1{
+  color:var(--primary);
+  font-size:1.25rem;
+  margin:0 0 1rem 0;
+}
+
+.login-card label{
+  display:block;
+  font-size:0.9rem;
+  color:var(--muted);
+  margin-bottom:0.5rem;
+}
+
+.login-card input{
+  width:100%;
+  padding:0.5rem 0.75rem;
+  border:1px solid var(--input-border);
+  background: #ffffff;
+  border-radius:8px;
+  margin-top:0.25rem;
+  margin-bottom:0.75rem;
+}
+
+.login-card input:focus{
+  outline:2px solid rgba(10,105,255,0.12);
+  border-color:var(--accent);
+}
+
+.login-card .error{
+  color:#b91c1c;
+  margin-bottom:0.75rem;
+}
+
+.login-card button{
+  width:100%;
+  background:var(--primary);
+  color:white;
+  padding:0.6rem;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  box-shadow: 0 6px 18px rgba(10,105,255,0.12);
+}
+
+.login-card button:hover{
+  background:var(--primary-dark);
+}
+
+.login-card .secondary-button{
+  width:100%;
+  margin-top:0.6rem;
+  background:var(--primary-light);
+  color: #04213a;
+  padding:0.56rem;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  box-shadow: none;
+}
+
+.login-card .secondary-button:hover{
+  filter:brightness(0.95);
+}
+
+/* Global UI touches to apply contrast to future pages */
+.app-header{
+  background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+  border-bottom:1px solid var(--card-border);
+  padding:0.75rem 1rem;
+}
+
+a{ color: var(--accent); text-decoration: none }
+a:hover{ text-decoration: underline }
+
+.card{
+  background: var(--card-contrast);
+  border:1px solid var(--card-border);
+  border-radius:12px;
+  box-shadow: var(--shadow);
+  padding:1rem;
+}

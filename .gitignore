@@ -216,3 +216,36 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+**/node_modules/
+dist/
+frontend/dist/
+build/
+/.parcel-cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vite / env
+.env.local
+.env.*.local
+.vite
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# IDEs
+.idea/
+.vscode/
+
+# Logs
+*.log
+

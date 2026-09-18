@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: origin
+      POSTGRES_PASSWORD: originpass
+      POSTGRES_DB: origindb
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U origin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./Backend
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '8000:8000'
+    environment:
+      - DATABASE_URL=postgresql://origin:originpass@db:5432/origindb
+      - SECRET_KEY=change_me_dev_only_replace_in_prod
+      - FRONTEND_URL=http://frontend:80
+    volumes:
+      - ./Backend:/app:delegated
+    restart: on-failure
+
+  frontend:
+    build:
+      context: ./Frontend
+      args:
+        VITE_API_URL: http://backend:8000
+    ports:
+      - '3000:80'
+    environment:
+    volumes:
+      - ./Frontend:/app:delegated
+    restart: on-failure
+
+volumes:
+  db_data:
