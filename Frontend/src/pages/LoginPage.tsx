@@ -1,12 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiPostForm, saveToken } from '../api'
+import { getToken } from '../api'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
+
+  useEffect(()=>{
+    const token = getToken()
+    if(token) navigate('/app')
+  }, [navigate])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -23,7 +29,7 @@ export default function LoginPage() {
       }
       const data = await res.json()
       saveToken(data.access_token)
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       setError('Error de conexión')
     }

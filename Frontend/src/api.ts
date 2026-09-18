@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_BASE = (typeof window !== 'undefined' && (window as any).__VITE_API_URL__) || 'http://localhost:8000'
 
 export async function apiPostJson(path: string, body: any, token?: string) {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -32,3 +32,16 @@ export function getToken() {
 }
 
 export default API_BASE
+
+export function getUsernameFromToken(): string | null {
+  const token = getToken()
+  if (!token) return null
+  try {
+    const parts = token.split('.')
+    if (parts.length < 2) return null
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')))
+    return payload.sub || null
+  } catch (e) {
+    return null
+  }
+}

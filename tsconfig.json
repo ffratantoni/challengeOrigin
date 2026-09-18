@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "paths": {},
+    "skipLibCheck": true
+  },
+  "include": ["Frontend/src", "Frontend/src/**/*"]
+}

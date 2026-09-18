@@ -249,3 +249,7 @@ docker-compose.override.yml
 # Logs
 *.log
 
+# Local sqlite used for quick dev/testing
+backend.db
+Backend/backend.db
+

@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiPostJson } from '../api'
+import { getToken } from '../api'
 
 export default function RegisterPage(){
   const [username, setUsername] = useState('')
@@ -8,6 +9,11 @@ export default function RegisterPage(){
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
+
+  useEffect(()=>{
+    const token = getToken()
+    if(token) navigate('/app')
+  }, [navigate])
 
   async function handleSubmit(e: React.FormEvent){
     e.preventDefault()
@@ -28,7 +34,7 @@ export default function RegisterPage(){
         return
       }
       alert('Usuario creado')
-      navigate('/')
+      navigate('/app')
     }catch(err){
       setError('Error de conexión')
     }

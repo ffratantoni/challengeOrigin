@@ -119,3 +119,44 @@ a:hover{ text-decoration: underline }
   box-shadow: var(--shadow);
   padding:1rem;
 }
+
+.banner{
+  background: var(--primary);
+  color: white;
+  padding:1.5rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+}
+.banner-content h2{margin:0 0 0.5rem 0}
+
+.banner-content{display:flex;justify-content:center;align-items:center}
+.banner-inner{display:flex;align-items:center;gap:0.75rem}
+.banner .logo{width:48px;height:48px;flex:0 0 48px}
+.banner .logo rect{opacity:0.95}
+.banner .logo path{stroke:#0a69ff}
+
+.main-menu{
+  display:flex;
+  gap:0.5rem;
+  padding:0.5rem 1rem;
+  background:var(--card-contrast);
+  border-bottom:1px solid var(--card-border);
+  margin: 0.25rem auto;
+  width: max-content;
+  box-shadow: none;
+  align-items: center;
+}
+.menu-item{
+  background:transparent;
+  border:none;
+  padding:0.6rem 1rem;
+  border-radius:8px;
+  cursor:pointer;
+  color:var(--muted);
+}
+.menu-item.active{
+  background:var(--primary);
+  color:white;
+  box-shadow: 0 6px 18px rgba(10,105,255,0.12);
+}
+
