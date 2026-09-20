@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getMyFavorites, fetchStocksBySymbols } from '../api'
+import StockChart from './StockChart'
 
 export default function FavoritesList(){
   const [symbols, setSymbols] = useState<string[]>([])
@@ -87,18 +88,16 @@ export default function FavoritesList(){
           return
         }
       }
-      // render React component into #chart-root
-      import('./StockChart').then(mod => {
-        const Chart = mod.default
-        const root = document.getElementById('chart-root')
-        if(!root) return
-        root.innerHTML = ''
-        const container = document.createElement('div')
-        root.appendChild(container)
-        import('react-dom/client').then(rdom=>{
-          const rootNode = (rdom as any).createRoot(container)
-          rootNode.render(React.createElement(Chart, { symbol: selectedItem.simbolo, mode, interval, start_date: start, end_date: end }))
-        })
+      // render React component into #chart-root using static import
+      const Chart = StockChart
+      const root = document.getElementById('chart-root')
+      if(!root) return
+      root.innerHTML = ''
+      const container = document.createElement('div')
+      root.appendChild(container)
+      import('react-dom/client').then(rdom=>{
+        const rootNode = (rdom as any).createRoot(container)
+        rootNode.render(React.createElement(Chart, { symbol: selectedItem.simbolo, mode, interval, start_date: start, end_date: end }))
       })
     }
     plotBtn.addEventListener('click', handler)

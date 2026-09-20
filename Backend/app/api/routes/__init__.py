@@ -1,3 +1,3 @@
-from . import auth, users, stocks, favorites
+from . import auth, users, stocks, favorites, portfolio
 
-__all__ = ["auth", "users", "favorites"]
+__all__ = ["auth", "users", "favorites", "portfolio"]

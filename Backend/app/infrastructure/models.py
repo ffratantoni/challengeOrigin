@@ -25,3 +25,17 @@ class Favorite(Base):
     user_id = Column(Integer, nullable=False, index=True)
     symbol = Column(String(64), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Portfolio(Base):
+    __tablename__ = 'portfolio'
+    __table_args__ = (
+        UniqueConstraint('user_id', 'symbol',
+                         name='uix_portfolio_user_symbol'),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    symbol = Column(String(64), nullable=False, index=True)
+    quantity = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

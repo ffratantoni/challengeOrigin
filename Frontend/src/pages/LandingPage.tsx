@@ -1,10 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { getUsernameFromToken } from '../api'
+import { getUsernameFromToken, getToken } from '../api'
+import { useNavigate } from 'react-router-dom'
 import StocksList from '../components/StocksList'
 import FavoritesList from '../components/FavoritesList'
+import TradeForm from './TradeForm'
+import TransferForm from './TransferForm'
 
 export default function LandingPage() {
   const username = getUsernameFromToken() || 'Invitado'
+  const navigate = useNavigate()
+  const token = getToken()
+
+  useEffect(()=>{
+    // force login: if no token present, go to login page
+    if(!token) navigate('/', { replace: true })
+  }, [token, navigate])
   const [active, setActive] = useState<'mis'|'trade'|'transfer'|'stocks'>('mis')
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [bannerWidth, setBannerWidth] = useState<number | null>(null)
@@ -20,11 +30,19 @@ export default function LandingPage() {
     return ()=> window.removeEventListener('resize', measure)
   }, [])
 
+  const handleLogout = () => {
+    try { localStorage.removeItem('access_token') } catch {}
+    navigate('/', { replace: true })
+  }
+
   return (
     <div>
       <header className="app-header">
-        <div style={{display:'flex',alignItems:'center'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
           <div>Hola, <strong>{username}</strong></div>
+          <div>
+            <button onClick={handleLogout} style={{padding:'6px 10px',borderRadius:6}}>Cerrar sesión</button>
+          </div>
         </div>
       </header>
 
@@ -51,8 +69,14 @@ export default function LandingPage() {
         <div className="card">
           {active==='stocks' && <div><h3>Stocks</h3><StocksList/></div>}
           {active==='mis' && <div><h3>Mis Acciones</h3><FavoritesList/></div>}
-          {active==='trade' && <div><h3>Compra / Venta</h3><p>Formulario de compra/venta (por implementar).</p></div>}
-          {active==='transfer' && <div><h3>Transferencias</h3><p>Gestiona transferencias entre cuentas.</p></div>}
+          {active==='trade' && <div>
+            <h3>Compra / Venta</h3>
+            <TradeForm />
+          </div>}
+          {active==='transfer' && <div>
+            <h3>Transferencias</h3>
+            <TransferForm />
+          </div>}
         </div>
       </main>
     </div>

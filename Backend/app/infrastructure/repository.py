@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from app.infrastructure import models
 from app.core import schemas
 from app.services.security import get_password_hash, verify_password
-from typing import List, Optional
+from typing import List, Optional, cast
 from sqlalchemy.exc import IntegrityError
 
 
@@ -15,6 +15,7 @@ def get_db_sync():
         db.close()
 
 
+## User repository helpers ##
 def get_user_by_username_sync(db: Session, username: str) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.username == username).first()
 
@@ -94,3 +95,43 @@ def remove_user_favorite(db: Session, user_id: int, symbol: str) -> None:
     db.query(models.Favorite).filter(models.Favorite.user_id ==
                                      user_id, models.Favorite.symbol == symbol).delete()
     db.commit()
+
+
+# Portfolio helpers
+def get_user_portfolio(db: Session, user_id: int):
+    return db.query(models.Portfolio).filter(models.Portfolio.user_id == user_id).all()
+
+
+def get_user_holding(db: Session, user_id: int, symbol: str):
+    return db.query(models.Portfolio).filter(models.Portfolio.user_id == user_id, models.Portfolio.symbol == symbol).first()
+
+
+def add_or_update_holding(db: Session, user_id: int, symbol: str, quantity_delta: int):
+    # modify existing or insert
+    existing = db.query(models.Portfolio).filter(
+        models.Portfolio.user_id == user_id, models.Portfolio.symbol == symbol).first()
+    if existing:
+        current_q = int(cast(int, getattr(existing, 'quantity')) or 0)
+        new_q = current_q + int(quantity_delta)
+        if new_q < 0:
+            raise ValueError('Insufficient shares')
+        setattr(existing, 'quantity', new_q)
+        db.add(existing)
+    else:
+        if quantity_delta < 0:
+            raise ValueError('Insufficient shares')
+        existing = models.Portfolio(
+            user_id=user_id, symbol=symbol, quantity=quantity_delta)
+        db.add(existing)
+    db.commit()
+    db.refresh(existing)
+    return existing
+
+
+def remove_holding_if_zero(db: Session, user_id: int, symbol: str):
+    h = get_user_holding(db, user_id, symbol)
+    if h:
+        q = int(cast(int, getattr(h, 'quantity')) or 0)
+        if q <= 0:
+            db.delete(h)
+            db.commit()

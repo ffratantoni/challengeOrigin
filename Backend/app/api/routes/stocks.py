@@ -47,6 +47,7 @@ async def get_stocks(
             params_list.append(('symbol', s))
 
     r = None
+    # ensure r is defined for exception handling
     try:
         async with httpx.AsyncClient(timeout=20.0) as client:
             # Single-symbol: forward exactly symbol + optional source
@@ -118,6 +119,7 @@ async def get_timeseries(request: Request, symbol: str = Query(...), mode: str =
     if end_date:
         params['end_date'] = end_date
     # realtime vs historical may map to different endpoints or params; keep simple
+    r = None
     try:
         async with httpx.AsyncClient(timeout=20.0) as client:
             r = await client.get(endpoint, params=params)

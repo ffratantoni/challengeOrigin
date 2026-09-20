@@ -29,3 +29,29 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+
+class TradeRequest(BaseModel):
+    symbol: str
+    quantity: int
+    buy: bool = True
+
+
+class PortfolioItem(BaseModel):
+    symbol: str
+    quantity: int
+
+    class Config:
+        orm_mode = True
+
+
+class TransferRequest(BaseModel):
+    to_username: str
+    amount: float
+    symbol: Optional[str] = None
+
+
+class TransferResult(BaseModel):
+    _from: str
+    to: str
+    amount: float

@@ -114,7 +114,12 @@ export async function getMyFavorites(): Promise<string[]> {
   console.debug('[api] getMyFavorites', { ts: Date.now(), hasToken: !!token })
   const headers = { ...(token? { Authorization: `Bearer ${token}` } : {}) }
   const r = await _dedupRequest(`${API_BASE}/me/favorites/`, { headers, cache: 'no-cache' })
-  if (!r || !r.ok) return []
+  if (!r) return []
+  if (r.status === 401) {
+    try { localStorage.removeItem('access_token') } catch {}
+    return []
+  }
+  if (!r.ok) return []
   return Array.isArray(r.json) ? r.json : []
 }
 
@@ -124,6 +129,7 @@ export async function addMyFavorite(symbol: string): Promise<boolean> {
   const headers = { 'Content-Type': 'application/json', ...(token? { Authorization: `Bearer ${token}` } : {}) }
   const body = JSON.stringify({ symbol })
   const r = await _dedupRequest(`${API_BASE}/me/favorites/`, { method: 'POST', headers, body })
+  if (r && r.status === 401) { try { localStorage.removeItem('access_token') } catch {} ; return false }
   return !!(r && r.ok)
 }
 
@@ -132,5 +138,30 @@ export async function removeMyFavorite(symbol: string): Promise<boolean> {
   console.debug('[api] removeMyFavorite', { ts: Date.now(), symbol, hasToken: !!token })
   const headers = { ...(token? { Authorization: `Bearer ${token}` } : {}) }
   const r = await _dedupRequest(`${API_BASE}/me/favorites/${encodeURIComponent(symbol)}`, { method: 'DELETE', headers })
+  if (r && r.status === 401) { try { localStorage.removeItem('access_token') } catch {} ; return false }
   return !!(r && r.ok)
+}
+
+// Portfolio API helpers
+export async function getMyPortfolio(): Promise<Array<{ symbol: string; quantity: number }>> {
+  const token = getToken()
+  const headers = { ...(token? { Authorization: `Bearer ${token}` } : {}) }
+  const r = await _dedupRequest(`${API_BASE}/me/portfolio/`, { headers, cache: 'no-cache' })
+  if (!r || !r.ok) return []
+  return Array.isArray(r.json) ? r.json : []
+}
+
+// Listen for portfolio changes (browser global event). Consumers can attach listeners:
+// window.addEventListener('portfolio:changed', handler)
+// This is a no-op export but documents the event.
+export const portfolioEventName = 'portfolio:changed'
+
+export async function executeTrade(symbol: string, quantity: number, buy: boolean): Promise<{ symbol: string; quantity: number } | null> {
+  const token = getToken()
+  const body = { symbol, quantity, buy }
+  const res = await apiPostJson('/me/portfolio/trade', body, token || undefined)
+  if (!res) return null
+  if (res.status === 401) { try { localStorage.removeItem('access_token') } catch {} ; return null }
+  if (!res.ok) return null
+  try { return await res.json() } catch { return null }
 }

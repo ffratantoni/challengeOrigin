@@ -9,7 +9,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=4)
+    password: str = Field(..., min_length=2)
 
 
 class UserOut(UserBase):
@@ -29,3 +29,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+

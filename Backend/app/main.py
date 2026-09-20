@@ -1,6 +1,6 @@
 from fastapi import Request
 import os
-from app.api.routes import auth as auth_router, users as users_router, stocks as stocks_router, favorites as favorites_router
+from app.api.routes import auth as auth_router, users as users_router, stocks as stocks_router, favorites as favorites_router, portfolio as portfolio_router
 from app.infrastructure.database import engine, Base
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -75,6 +75,7 @@ app.include_router(auth_router.router)
 app.include_router(users_router.router)
 app.include_router(stocks_router.router)
 app.include_router(favorites_router.router)
+app.include_router(portfolio_router.router)
 
 
 @app.get('/')
