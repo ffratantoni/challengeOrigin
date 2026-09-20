@@ -7,8 +7,8 @@ import logging
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'CHANGE_THIS_SECRET_IN_PROD')
-if SECRET_KEY == 'CHANGE_THIS_SECRET_IN_PROD':
+SECRET_KEY = os.getenv('SECRET_KEY', 'Nuestro_Hermoso_Secreto')
+if SECRET_KEY == 'Nuestro_Hermoso_Secreto':
     logging.warning(
         'Using default SECRET_KEY; set SECRET_KEY env var in production')
 

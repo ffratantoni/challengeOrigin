@@ -15,7 +15,7 @@ def get_db_sync():
         db.close()
 
 
-## User repository helpers ##
+## ------ User repository helpers ------ ##
 def get_user_by_username_sync(db: Session, username: str) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.username == username).first()
 
@@ -61,8 +61,11 @@ def delete_user_sync(db: Session, db_user: models.User) -> None:
     db.delete(db_user)
     db.commit()
 
+## ------   ------ ##
 
-# Favorites repository helpers
+## ------ Favorites repository helpers ------ ##
+
+
 def list_user_favorites(db: Session, user_id: int) -> List[models.Favorite]:
     return db.query(models.Favorite).filter(models.Favorite.user_id == user_id).all()
 
@@ -96,8 +99,11 @@ def remove_user_favorite(db: Session, user_id: int, symbol: str) -> None:
                                      user_id, models.Favorite.symbol == symbol).delete()
     db.commit()
 
+## ------   ------ ##
 
-# Portfolio helpers
+## ------ Portfolio repository helpers ------ ##
+
+
 def get_user_portfolio(db: Session, user_id: int):
     return db.query(models.Portfolio).filter(models.Portfolio.user_id == user_id).all()
 
@@ -135,3 +141,5 @@ def remove_holding_if_zero(db: Session, user_id: int, symbol: str):
         if q <= 0:
             db.delete(h)
             db.commit()
+
+## ------   ------ ##
