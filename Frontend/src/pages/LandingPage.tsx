@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { getUsernameFromToken } from '../api'
+import StocksList from '../components/StocksList'
+import FavoritesList from '../components/FavoritesList'
 
 export default function LandingPage() {
   const username = getUsernameFromToken() || 'Invitado'
@@ -47,8 +49,8 @@ export default function LandingPage() {
 
       <main style={{padding:'1rem'}}>
         <div className="card">
-          {active==='stocks' && <div><h3>Stocks</h3><p>Explora símbolos y cotizaciones (contenido de ejemplo).</p></div>}
-          {active==='mis' && <div><h3>Mis Acciones</h3><p>Listado de tus acciones (contenido de ejemplo).</p></div>}
+          {active==='stocks' && <div><h3>Stocks</h3><StocksList/></div>}
+          {active==='mis' && <div><h3>Mis Acciones</h3><FavoritesList/></div>}
           {active==='trade' && <div><h3>Compra / Venta</h3><p>Formulario de compra/venta (por implementar).</p></div>}
           {active==='transfer' && <div><h3>Transferencias</h3><p>Gestiona transferencias entre cuentas.</p></div>}
         </div>

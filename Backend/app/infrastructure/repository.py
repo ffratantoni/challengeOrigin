@@ -3,6 +3,7 @@ from app.infrastructure import models
 from app.core import schemas
 from app.services.security import get_password_hash, verify_password
 from typing import List, Optional
+from sqlalchemy.exc import IntegrityError
 
 
 def get_db_sync():
@@ -40,7 +41,7 @@ def authenticate_user_sync(db: Session, username: str, password: str) -> Optiona
     user = get_user_by_username_sync(db, username)
     if not user:
         return None
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, str(user.hashed_password)):
         return None
     return user
 
@@ -57,4 +58,39 @@ def update_user_sync(db: Session, db_user: models.User, data: dict) -> models.Us
 
 def delete_user_sync(db: Session, db_user: models.User) -> None:
     db.delete(db_user)
+    db.commit()
+
+
+# Favorites repository helpers
+def list_user_favorites(db: Session, user_id: int) -> List[models.Favorite]:
+    return db.query(models.Favorite).filter(models.Favorite.user_id == user_id).all()
+
+
+def add_user_favorite(db: Session, user_id: int, symbol: str) -> models.Favorite:
+    # avoid duplicates
+    existing = db.query(models.Favorite).filter(
+        models.Favorite.user_id == user_id, models.Favorite.symbol == symbol).first()
+    if existing:
+        # favorite already exists, return it
+        return existing
+    fav = models.Favorite(user_id=user_id, symbol=symbol)
+    db.add(fav)
+    try:
+        db.commit()
+    except IntegrityError as ie:
+        # IntegrityError likely due to concurrent insert, will handle by returning existing favorite
+        db.rollback()
+        # possibly inserted concurrently, return existing
+        existing2 = db.query(models.Favorite).filter(
+            models.Favorite.user_id == user_id, models.Favorite.symbol == symbol).first()
+        # possibly inserted concurrently, return existing
+        return existing2
+    db.refresh(fav)
+
+    return fav
+
+
+def remove_user_favorite(db: Session, user_id: int, symbol: str) -> None:
+    db.query(models.Favorite).filter(models.Favorite.user_id ==
+                                     user_id, models.Favorite.symbol == symbol).delete()
     db.commit()

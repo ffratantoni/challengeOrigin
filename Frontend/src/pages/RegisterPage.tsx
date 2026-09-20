@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiPostJson } from '../api'
+import { apiPostJson, apiPostForm, saveToken } from '../api'
 import { getToken } from '../api'
 
 export default function RegisterPage(){
@@ -32,6 +32,15 @@ export default function RegisterPage(){
         const data = await res.json().catch(() => ({}))
         setError(data.detail || 'Error creando usuario')
         return
+      }
+      // Auto-login after register
+      const form = new URLSearchParams()
+      form.append('username', username)
+      form.append('password', password)
+      const loginRes = await apiPostForm('/auth/login', form)
+      if (loginRes.ok) {
+        const data = await loginRes.json().catch(() => ({}))
+        if (data.access_token) saveToken(data.access_token)
       }
       alert('Usuario creado')
       navigate('/app')
