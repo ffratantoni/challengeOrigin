@@ -1,0 +1,32 @@
+erDiagram
+    USERS {
+        INTEGER id PK "primary key"
+        VARCHAR username "unique, not null"
+        VARCHAR email
+        VARCHAR hashed_password
+        BOOLEAN is_active
+        BOOLEAN is_superuser
+        DATETIME created_at
+    }
+
+    FAVORITES {
+        INTEGER id PK
+        INTEGER user_id FK
+        VARCHAR symbol
+        DATETIME created_at
+    }
+
+    PORTFOLIO {
+        INTEGER id PK
+        INTEGER user_id FK
+        VARCHAR symbol
+        INTEGER quantity
+        DATETIME created_at
+    }
+
+    USERS ||--o{ FAVORITES : "has"
+    USERS ||--o{ PORTFOLIO : "owns"
+
+    %% Notes
+    %% - `FAVORITES` has a unique constraint on (user_id, symbol)
+    %% - `PORTFOLIO` has a unique constraint on (user_id, symbol)
